@@ -1,0 +1,24 @@
+name: Mon Workflow
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  prepare_tests:
+    runs-on: ubuntu-latest
+    outputs:
+      HOST: ${{ steps.setup_host.outputs.HOST }}
+      DATABASE: ${{ steps.setup_host.outputs.DATABASE }}
+    steps:
+    - name: Setup Host
+      run: echo "::set-output name=HOST::srv1\n::set-output name=DATABASE::prep002"
+    - name: Write Outputs
+      run: echo "HOST=${{ steps.setup_host.outputs.HOST }}\nDATABASE=${{ steps.setup_host.outputs.DATABASE }}" >> output.txt
+
+  display_infos:
+    needs: prepare_tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Display Outputs
+      run: echo "HOST=${{ needs.prepare_tests.outputs.HOST }}\nDATABASE=${{ needs.prepare_tests.outputs.DATABASE }}"
